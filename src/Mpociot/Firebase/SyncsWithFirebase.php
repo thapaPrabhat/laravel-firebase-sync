@@ -31,9 +31,13 @@ trait SyncsWithFirebase
         static::deleted(function ($model) {
             $model->saveToFirebase('delete');
         });
-        static::restored(function ($model) {
-            $model->saveToFirebase('set');
-        });
+        try {
+            static::restored(function ($model) {
+                $model->saveToFirebase('set');
+            });
+        } catch (\Throwable $th) {
+            // \Log::info("The model doesnt seem be using SoftDelete");
+        }
     }
 
     /**
